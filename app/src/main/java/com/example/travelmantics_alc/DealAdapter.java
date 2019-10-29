@@ -26,11 +26,12 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     private ChildEventListener mChildListener;
-    public DealAdapter(Activity activity){
+
+    public DealAdapter(ListActivity activity){
         FirebaseUtil.openFbReference("traveldeals", activity);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
-        deals = FirebaseUtil.mdeals;
+        this.deals = FirebaseUtil.mdeals;
         mChildListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
