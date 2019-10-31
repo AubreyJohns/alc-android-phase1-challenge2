@@ -44,7 +44,7 @@ public class DealActivity extends AppCompatActivity {
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal) intent.getSerializableExtra("Deal");
         if (deal == null){
-            deal = new TravelDeal();
+            this.deal = new TravelDeal();
         }
         this.deal = deal;
         txtTitle.setText(deal.getTitle());
@@ -67,17 +67,18 @@ public class DealActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICTURE_RESULT && resultCode == RESULT_OK){
             Uri imageUri = data.getData();
-            StorageReference ref = FirebaseUtil.mstorageRef.child(imageUri.getLastPathSegment());
+            final StorageReference ref = FirebaseUtil.mstorageRef.child(imageUri.getLastPathSegment());
             ref.putFile(imageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(DealActivity.this,"Upload Successful", Toast.LENGTH_LONG).show();
-//                    Task<Uri> urlTask  = taskSnapshot.getMetadata().getReference().getDownloadUrl();
-//                    while (!urlTask.isSuccessful());
-//                    Uri downloadUrl = urlTask.getResult();
-//                    String url = downloadUrl.toString();
-//                    Log.d("Url:", url);
-//                    deal.setImageUrl(url);
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Uri url = uri;
+                            deal.setImageUrl(url.toString());
+                        }
+                    });
+                    Toast.makeText(DealActivity.this, "Upload success", Toast.LENGTH_SHORT).show();
                 }
             });
         }
