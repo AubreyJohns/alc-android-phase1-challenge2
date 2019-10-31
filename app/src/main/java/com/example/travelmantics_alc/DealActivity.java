@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +35,7 @@ public class DealActivity extends AppCompatActivity {
     EditText txtPrice;
     EditText txtDescription;
     ImageView imageView;
+    Button btnImage;
     TravelDeal deal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +50,17 @@ public class DealActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.image);
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal) intent.getSerializableExtra("Deal");
-        if (deal == null){
+        if (deal == null) {
             this.deal = new TravelDeal();
+        } else {
+            this.deal = deal;
+            txtTitle.setText(deal.getTitle());
+            txtPrice.setText(deal.getPrice());
+            txtDescription.setText(deal.getDescription());
+            showImage(deal.getImageUrl());
         }
-        this.deal = deal;
-        showImage(deal.getImageUrl());
-        txtTitle.setText(deal.getTitle());
-        txtPrice.setText(deal.getPrice());
-        txtDescription.setText(deal.getDescription());
-        Button btnImage = findViewById(R.id.btnImage);
+
+        btnImage = findViewById(R.id.btnImage);
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,6 +86,10 @@ public class DealActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             Uri url = uri;
                             deal.setImageUrl(url.toString());
+                            Log.d("url", deal.getImageUrl());
+                            String pictureName = ref.getPath();
+                            deal.setImageName(pictureName);
+                            Log.d("name", deal.getImageName());
                             showImage(url.toString());
                         }
                     });
@@ -99,10 +107,12 @@ public class DealActivity extends AppCompatActivity {
             menu.findItem(R.id.delete_menu).setVisible(true);
             menu.findItem(R.id.save_menu).setVisible(true);
             enableEditTexts(true);
+            enableUploadButton(View.VISIBLE);
         }else{
             menu.findItem(R.id.delete_menu).setVisible(false);
             menu.findItem(R.id.save_menu).setVisible(false);
             enableEditTexts(false);
+            enableUploadButton(View.INVISIBLE);
         }
         return true;
     }
@@ -113,13 +123,13 @@ public class DealActivity extends AppCompatActivity {
             case R.id.save_menu:
                 saveDeal();
                 Toast.makeText(this, "Deal saved", Toast.LENGTH_LONG).show();
-                clean();
-                backToList();
+                //clean();
+                //backToList();
                 return true;
             case R.id.delete_menu:
                 deleteDeal();
                 Toast.makeText(this, "Deal deleted", Toast.LENGTH_LONG).show();
-                backToList();
+                //backToList();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -138,11 +148,25 @@ public class DealActivity extends AppCompatActivity {
     }
 
     private void deleteDeal() {
-        if (deal == null){
+        if (deal.getId() == null){
             Toast.makeText(this, "Please save the deal before deleting", Toast.LENGTH_SHORT).show();
             return;
         }else{
             mDatabaseReference.child(deal.getId()).removeValue();
+            if (deal.getImageName() != null && deal.getImageName().isEmpty() == false){
+                StorageReference picRef = FirebaseUtil.mstorage.getReference().child(deal.getImageName());
+                picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Delete image", "Image deleted successfully");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Delete image", e.getMessage());
+                    }
+                });
+            }
         }
     }
 
@@ -162,6 +186,10 @@ public class DealActivity extends AppCompatActivity {
         txtTitle.setEnabled(isEnabled);
         txtPrice.setEnabled(isEnabled);
         txtDescription.setEnabled(isEnabled);
+    }
+
+    public void enableUploadButton(int visibility){
+        btnImage.setVisibility(visibility);
     }
 
     private void showImage(String url){
