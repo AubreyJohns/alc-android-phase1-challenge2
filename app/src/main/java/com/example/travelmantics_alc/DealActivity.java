@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 public class DealActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
@@ -30,6 +33,7 @@ public class DealActivity extends AppCompatActivity {
     EditText txtTitle;
     EditText txtPrice;
     EditText txtDescription;
+    ImageView imageView;
     TravelDeal deal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +45,14 @@ public class DealActivity extends AppCompatActivity {
         txtTitle = (EditText) findViewById(R.id.txtTitle);
         txtPrice = (EditText) findViewById(R.id.txtPrice);
         txtDescription = (EditText) findViewById(R.id.txtDescription);
+        imageView = (ImageView) findViewById(R.id.image);
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal) intent.getSerializableExtra("Deal");
         if (deal == null){
             this.deal = new TravelDeal();
         }
         this.deal = deal;
+        showImage(deal.getImageUrl());
         txtTitle.setText(deal.getTitle());
         txtPrice.setText(deal.getPrice());
         txtDescription.setText(deal.getDescription());
@@ -76,6 +82,7 @@ public class DealActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             Uri url = uri;
                             deal.setImageUrl(url.toString());
+                            showImage(url.toString());
                         }
                     });
                     Toast.makeText(DealActivity.this, "Upload success", Toast.LENGTH_SHORT).show();
@@ -155,5 +162,16 @@ public class DealActivity extends AppCompatActivity {
         txtTitle.setEnabled(isEnabled);
         txtPrice.setEnabled(isEnabled);
         txtDescription.setEnabled(isEnabled);
+    }
+
+    private void showImage(String url){
+        if (url != null && url.isEmpty() == false){
+            int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+            Picasso.get()
+                    .load(url)
+                    .resize(width, width * 2/3)
+                    .centerCrop()
+                    .into(imageView);
+        }
     }
 }
