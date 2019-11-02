@@ -48,7 +48,7 @@
         android:id="@+id/btnImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Image"
+        android:text="@string/btn_image"
         android:layout_marginEnd="@dimen/txt_margin_standard"
         android:layout_marginStart="@dimen/txt_margin_standard"
         android:layout_marginTop="@dimen/txt_margin_standard"

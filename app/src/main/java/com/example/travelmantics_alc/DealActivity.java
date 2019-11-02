@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -37,6 +38,7 @@ public class DealActivity extends AppCompatActivity {
     ImageView imageView;
     Button btnImage;
     TravelDeal deal;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public class DealActivity extends AppCompatActivity {
         txtPrice = (EditText) findViewById(R.id.txtPrice);
         txtDescription = (EditText) findViewById(R.id.txtDescription);
         imageView = (ImageView) findViewById(R.id.image);
+        progressDialog =  new ProgressDialog(DealActivity.this);
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal) intent.getSerializableExtra("Deal");
         if (deal == null) {
@@ -67,7 +70,11 @@ public class DealActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(intent.createChooser(intent, "Insert Picture"), PICTURE_RESULT);
+                startActivityForResult(intent.createChooser(intent, "Insert Picture"),
+                        PICTURE_RESULT);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Please Wait, uploading");
+                progressDialog.show();
             }
         });
     }
@@ -93,7 +100,9 @@ public class DealActivity extends AppCompatActivity {
                             showImage(url.toString());
                         }
                     });
-                    Toast.makeText(DealActivity.this, "Upload success", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Toast.makeText(DealActivity.this, "Upload success",
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -129,6 +138,7 @@ public class DealActivity extends AppCompatActivity {
             case R.id.delete_menu:
                 deleteDeal();
                 Toast.makeText(this, "Deal deleted", Toast.LENGTH_LONG).show();
+                clean();
                 //backToList();
                 return true;
             default:
