@@ -2,7 +2,7 @@
 
 Display Travel Deals.
 
-![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/ALC%20Phase%201.jpg) 
+![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/Travelmantics-ALC.jpg) 
 
 View details of a Travel Deal.
 
@@ -10,9 +10,9 @@ View details of a Travel Deal.
 
 View edit and delete details of a Travel Deal. Also delete a Travel Deal.
 
-![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/ALC%20Phase%201.jpg)
+![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/Travelmantics-ALC-Detail-User.jpg.jpg)
 
 ## Details Page (Admin)
 
-![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/ALC%20Phase%201.jpg)
+![Home](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/Travelmantics-ALC-Detail-Admin.jpg)
 
