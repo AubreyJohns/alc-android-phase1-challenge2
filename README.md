@@ -3,6 +3,7 @@
 CRUD and authentication practice using Firebase Realtime Database.
 
 Login
+
 ![Login](https://github.com/aubreyomondi/alc-android-phase1-challenge2/blob/master/travelmantic_login.jpg)
 
 Display Travel Deals. 
